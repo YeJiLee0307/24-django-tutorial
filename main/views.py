@@ -8,6 +8,11 @@ from rest_framework.mixins import (
     UpdateModelMixin,
     DestroyModelMixin,
 )
+from rest_framework import status
+from rest_framework.response import Response
+from .models import Student
+from .serializers import StudentSerializer
+
 
 
 class StudentListAPIView(ListModelMixin, CreateModelMixin, GenericAPIView):
@@ -17,6 +22,14 @@ class StudentListAPIView(ListModelMixin, CreateModelMixin, GenericAPIView):
     """
 
     ### assignment2: 이곳에 과제를 작성해주세요
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
     ### end assignment2
 
 
@@ -30,4 +43,15 @@ class StudentAPIView(
     """
 
     ### assignment2: 이곳에 과제를 작성해주세요
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
     ### end assignment2
