@@ -137,3 +137,5 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = "main.User"  # noqa: F811
+
+APPEND_SLASH = False
