@@ -15,4 +15,5 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = ['id', 'name', 'student_number', 'primary_major']
 
+
     ### end assignment2
