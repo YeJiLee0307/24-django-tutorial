@@ -104,7 +104,7 @@ class StudyParticipationListView(
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        if request.data.get("user") != request.user.id:
+        if request.data.get("user") != str(request.user.id):
             raise PermissionDenied("You cannot add participation for another user.")
         return self.create(request, *args, **kwargs)
     ### end assignment3
