@@ -1,5 +1,5 @@
 # Create your views here.
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.mixins import (
@@ -87,10 +87,10 @@ class StudyParticipationListView(
 
     ### assignment3: 이곳에 과제를 작성해주세요
 
-class StudyParticipationView(APIView):
+
     permission_classes = [IsAuthenticated]
     serializer_class = StudyParticipationSerializer
-    queryset = StudyParticipation.objects.all()
+
 
     def get_queryset(self):
         # 로그인한 사용자의 스터디 참여 이력만
@@ -104,11 +104,8 @@ class StudyParticipationView(APIView):
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        if request.data.get('user') and int(request.data['user']) != request.user.id:
-            return Response(
-                {"detail": "내 스터디 참여 목록 추가. 남의 것을 추가할 수 없습니다."},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        if request.data.get("user") != request.user.id:
+            raise PermissionDenied("You cannot add participation for another user.")
         return self.create(request, *args, **kwargs)
     ### end assignment3
 
@@ -122,7 +119,7 @@ class StudyParticipationView(
     """
 
     ### assignment3: 이곳에 과제를 작성해주세요
-    queryset = StudyParticipation.objects.all()
+
     permission_classes = [IsAuthenticated]
     serializer_class = StudyParticipationSerializer
 
