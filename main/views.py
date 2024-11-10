@@ -87,7 +87,7 @@ class StudyParticipationListView(
 
     ### assignment3: 이곳에 과제를 작성해주세요
 
-
+class StudyParticipationView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = StudyParticipationSerializer
     queryset = StudyParticipation.objects.all()
@@ -100,11 +100,15 @@ class StudyParticipationListView(
         # 로그인한 사용자로 참여 이력을 생성
         serializer.save(user=self.request.user)
 
-    # GET, POST 요청 처리
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        if request.data.get('user') and int(request.data['user']) != request.user.id:
+            return Response(
+                {"detail": "내 스터디 참여 목록 추가. 남의 것을 추가할 수 없습니다."},
+                status=status.HTTP_403_FORBIDDEN
+            )
         return self.create(request, *args, **kwargs)
     ### end assignment3
 
