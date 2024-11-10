@@ -1,6 +1,7 @@
 # Create your views here.
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 from rest_framework.mixins import (
     ListModelMixin,
     DestroyModelMixin,
@@ -9,17 +10,20 @@ from rest_framework.mixins import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from main.models import Study
+from main.models import Study, StudyParticipation
 from django.contrib.auth import login, authenticate
 from main.serializers import (
     StudySerializer,
     LoginSerializer,
     UserSerializer,
 )
-from rest_framework import generics
+from rest_framework import generics, status
+from main.models import StudyParticipation
+from main.serializers import StudyParticipationSerializer
 
 
-class LoginView(GenericAPIView):
+
+class LoginView(APIView):
     authentication_classes = []
     permission_classes = []
     serializer_class = LoginSerializer
@@ -82,6 +86,26 @@ class StudyParticipationListView(
     """
 
     ### assignment3: 이곳에 과제를 작성해주세요
+
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = StudyParticipationSerializer
+    queryset = StudyParticipation.objects.all()
+
+    def get_queryset(self):
+        # 로그인한 사용자의 스터디 참여 이력만
+        return StudyParticipation.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # 로그인한 사용자로 참여 이력을 생성
+        serializer.save(user=self.request.user)
+
+    # GET, POST 요청 처리
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
     ### end assignment3
 
 
@@ -94,4 +118,16 @@ class StudyParticipationView(
     """
 
     ### assignment3: 이곳에 과제를 작성해주세요
+class StudyParticipationView(DestroyModelMixin, GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = StudyParticipationSerializer
+
+    def get_queryset(self):
+        # 로그인한 사용자의 참여 이력만 조회
+        return StudyParticipation.objects.filter(user=self.request.user)
+
+    # DELETE 요청 처리
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
     ### end assignment3
