@@ -15,11 +15,11 @@ from django.contrib.auth import login, authenticate
 from main.serializers import (
     StudySerializer,
     LoginSerializer,
-    UserSerializer,
+    UserSerializer, StudyParticipationSerializer
 )
 from rest_framework import generics, status
 from main.models import StudyParticipation
-from main.serializers import StudyParticipationSerializer
+
 
 
 
@@ -118,7 +118,7 @@ class StudyParticipationView(
     """
 
     ### assignment3: 이곳에 과제를 작성해주세요
-class StudyParticipationView(DestroyModelMixin, GenericAPIView):
+    queryset = StudyParticipation.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = StudyParticipationSerializer
 
